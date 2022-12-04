@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">One Deck Dungeon</string>
     <string name="roll">Roll</string>
+    <string name="done">Done</string>
 </resources>
