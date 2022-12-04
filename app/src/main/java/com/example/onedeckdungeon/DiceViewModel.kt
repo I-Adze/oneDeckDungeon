@@ -15,9 +15,13 @@ class DiceViewModel : ViewModel() {
         // Copy map to ensure state flow updates
         val newDice = _uiState.value.dice.toMutableMap()
         newDice[dieColor] = num
-        _uiState.update {
-            currentState -> currentState.copy(dice = newDice)
+        _uiState.update { currentState ->
+            currentState.copy(dice = newDice)
         }
+    }
+
+    fun diceList(): List<Die> {
+        return uiState.value.dice.flatMap { entry -> (0 until entry.value).map { Die(entry.key) } }
     }
 }
 
