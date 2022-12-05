@@ -45,7 +45,7 @@ fun DieWithButtonAndImage(
     var result by remember { mutableStateOf(1) }
     var rolled by remember { mutableStateOf(false) }
     val imageResource = when (result) {
-        1 -> R.drawable.dice_1
+        1 -> R.drawable.dice_1_blue
         2 -> R.drawable.dice_2
         3 -> R.drawable.dice_3
         4 -> R.drawable.dice_4
@@ -53,15 +53,23 @@ fun DieWithButtonAndImage(
         else -> R.drawable.dice_6
     }
 
+    /*
+    use coloured versions of the dice to negate the use of text down left side?
+    4x2 grid for each colour (max 8 dice per | 6 heroic in play at once)
+    "-" " Roll" "+" buttons under each section, amounts stick between rolls as levels
+    gained but not lost
+    */
+
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = die.color.displayName,
-            color = Color.Red,
+            color = Color.Red, //text colour
             modifier = Modifier.drawBehind {
                 drawCircle(
                     color = die.color.displayColor,
                     radius = this.size.maxDimension
                 )
+                // draws circle behind text, circle is colour of the dice type
             },
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -75,15 +83,20 @@ fun DieWithButtonAndImage(
     }
 }
 
+
+
 @Composable
 fun DieSelector(modifier: Modifier, label: String, num: Int, onNumChange: (Int) -> Unit) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
             modifier = modifier.width(70.dp),
+            // input box width
             value = num.toString(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            // Sets keyboard screen to numbers rather than text
             onValueChange = { value ->
                 if (value.length in 1..2) {
+                    // limits to two digit values for input (can +1 button into 3 digits)
                     onNumChange(value.filter { it.isDigit() }.toInt())
                 }
             },
@@ -91,9 +104,39 @@ fun DieSelector(modifier: Modifier, label: String, num: Int, onNumChange: (Int) 
         )
     }
 
-    Button(onClick = { onNumChange(num + 1) }) {
-        Text(text = "test")
+    @Composable
+    fun PlusOne() {
+        Button(onClick = { onNumChange(num + 1) }) {
+            // Increase num value by one
+            Text(text = "+1")
+            // Button text
+        }
     }
+    @Composable
+    fun MinusOne() {
+        Button(onClick = { onNumChange(num - 1) }) {
+            // Decrease num value by one
+            Text(text = "-1")
+            // Button text
+        }
+    }
+
+    if (num in 1..8) {
+        PlusOne()
+        MinusOne()
+    } else if (num < 1) {
+        PlusOne()
+    } else {
+        MinusOne()
+    }
+    /*
+    if dice amount below one, only show "+1" button so dice cant be negative
+    if dice amount between one and eight show both "+1" & "-1" buttons
+    if dice amount above eight only show "-1" as eight is maximum dice amount in game
+
+    PlusOne and MinusOne function to clean repetitive code, unsure if correct placement
+    but unsure how to access DieSelector values if created outside of this function.
+     */
 }
 
 @Composable
