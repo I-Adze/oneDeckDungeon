@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.onedeckdungeon.ui.theme.OneDeckDungeonTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ fun DieWithButtonAndImage(
     var result by remember { mutableStateOf(1) }
     var rolled by remember { mutableStateOf(false) }
     val imageResource = when (result) {
-        1 -> R.drawable.dice_1_blue
+        1 -> R.drawable.dice_1
         2 -> R.drawable.dice_2
         3 -> R.drawable.dice_3
         4 -> R.drawable.dice_4
@@ -65,11 +66,11 @@ fun DieWithButtonAndImage(
             text = die.color.displayName,
             color = Color.Red, //text colour
             modifier = Modifier.drawBehind {
+                // draws circle behind text, circle is colour of the dice type
                 drawCircle(
                     color = die.color.displayColor,
                     radius = this.size.maxDimension
                 )
-                // draws circle behind text, circle is colour of the dice type
             },
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -89,14 +90,14 @@ fun DieWithButtonAndImage(
 fun DieSelector(modifier: Modifier, label: String, num: Int, onNumChange: (Int) -> Unit) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
-            modifier = modifier.width(70.dp),
             // input box width
+            modifier = modifier.width(70.dp),
             value = num.toString(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             // Sets keyboard screen to numbers rather than text
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { value ->
+                // limits to two digit values for input (can +1 button into 3 digits)
                 if (value.length in 1..2) {
-                    // limits to two digit values for input (can +1 button into 3 digits)
                     onNumChange(value.filter { it.isDigit() }.toInt())
                 }
             },
@@ -106,28 +107,19 @@ fun DieSelector(modifier: Modifier, label: String, num: Int, onNumChange: (Int) 
 
     @Composable
     fun PlusOne() {
+        // Increase num value by one
         Button(onClick = { onNumChange(num + 1) }) {
-            // Increase num value by one
-            Text(text = "+1")
             // Button text
+            Text(text = "+1")
         }
     }
     @Composable
     fun MinusOne() {
+        // Decrease num value by one
         Button(onClick = { onNumChange(num - 1) }) {
-            // Decrease num value by one
-            Text(text = "-1")
             // Button text
+            Text(text = "-1")
         }
-    }
-
-    if (num in 1..8) {
-        PlusOne()
-        MinusOne()
-    } else if (num < 1) {
-        PlusOne()
-    } else {
-        MinusOne()
     }
     /*
     if dice amount below one, only show "+1" button so dice cant be negative
@@ -137,6 +129,15 @@ fun DieSelector(modifier: Modifier, label: String, num: Int, onNumChange: (Int) 
     PlusOne and MinusOne function to clean repetitive code, unsure if correct placement
     but unsure how to access DieSelector values if created outside of this function.
      */
+    if (num in 1..7) {
+        PlusOne()
+        MinusOne()
+    } else if (num < 1) {
+        PlusOne()
+    } else {
+        MinusOne()
+    }
+
 }
 
 @Composable
